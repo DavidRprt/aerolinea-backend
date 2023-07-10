@@ -31,14 +31,12 @@ router.get("/modelos", async (req, res) => {
 
 router.post("/modelos", async (req, res) => {
   try {
-    const nuevoModelo = await Modelo.create(req.body)
+    const nuevoModelo = await ModeloAvion.create(req.body)
     res.status(201).json(nuevoModelo)
   } catch (error) {
     console.error("Error al agregar el modelo:", error)
     res.status(500).json({ error: "Error al agregar el modelo" })
   }
 })
-
-
 
 module.exports = router
