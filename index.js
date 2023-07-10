@@ -3,11 +3,16 @@ const { Sequelize, Model, DataTypes } = require("sequelize")
 const express = require("express")
 const app = express()
 const cors = require("cors")
+const bp = require("body-parser")
 
 const avionRouter = require("./routes/aviones")
 const aeropuertoRouter = require("./routes/aeropuertos")
 const rutasRouter = require("./routes/rutas")
+
 app.use(cors())
+app.use(express.json())
+app.use(bp.json())
+app.use(bp.urlencoded({ extended: true }))
 
 app.use("/api", aeropuertoRouter)
 app.use("/api", avionRouter)
