@@ -39,4 +39,28 @@ router.post("/modelos", async (req, res) => {
   }
 })
 
+router.delete("/modelos", async (req, res) => {
+  const id = req.body.idModelo
+  console.log(id)
+
+  try {
+    const modeloEliminado = await ModeloAvion.destroy({
+      where: { idmodelo: id },
+    })
+
+    if (modeloEliminado === 0) {
+      // El modelo no se encontró en la base de datos
+      return res.status(404).json({ mensaje: "Modelo no encontrado" })
+    }
+
+    res.json({ mensaje: "Modelo eliminado correctamente" })
+  } catch (error) {
+    // Ocurrió un error durante la eliminación del modelo
+    res.status(500).json({
+      mensaje: "Error al eliminar el modelo",
+      error: error.message,
+    })
+  }
+})
+
 module.exports = router

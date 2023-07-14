@@ -5,7 +5,7 @@ class ModeloAvion extends Model {}
 
 ModeloAvion.init(
   {
-    idModelo: {
+    idmodelo: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
@@ -23,8 +23,8 @@ ModeloAvion.init(
   },
   {
     sequelize,
-    modelName: "ModeloAvion",
-    tableName: "ModeloAvion",
+    modelName: "modeloavion",
+    tableName: "modeloavion",
     timestamps: false,
   }
 )

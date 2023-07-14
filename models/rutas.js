@@ -7,14 +7,14 @@ class Ruta extends Model {}
 
 Ruta.init(
   {
-    idRuta: {
+    idruta: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
       allowNull: false,
       unique: true,
     },
-    idOrigen: {
+    idorigen: {
       type: DataTypes.STRING(10),
       allowNull: false,
       references: {
@@ -22,7 +22,7 @@ Ruta.init(
         key: "idAeropuerto",
       },
     },
-    idDestino: {
+    iddestino: {
       type: DataTypes.STRING(10),
       allowNull: false,
       references: {
@@ -30,7 +30,7 @@ Ruta.init(
         key: "idAeropuerto",
       },
     },
-    idAvion: {
+    idavion: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -38,11 +38,11 @@ Ruta.init(
         key: "idAvion",
       },
     },
-    precioBase: {
+    preciobase: {
       type: DataTypes.FLOAT,
       allowNull: false,
     },
-    horarioSalida: {
+    horariosalida: {
       type: DataTypes.TIME,
       allowNull: false,
     },
@@ -81,13 +81,13 @@ Ruta.init(
   },
   {
     sequelize,
-    modelName: "Ruta",
-    tableName: "Ruta",
+    modelName: "ruta",
+    tableName: "ruta",
     timestamps: false,
   }
 )
 
-Ruta.belongsTo(Avion, { foreignKey: "idAvion" })
+Ruta.belongsTo(Avion, { foreignKey: "idavion" })
 
 
 module.exports = Ruta

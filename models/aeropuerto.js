@@ -5,7 +5,7 @@ const sequelize = require("../utils/sequelize")
 class Aeropuerto extends Model {}
 Aeropuerto.init(
   {
-    idAeropuerto: {
+    idaeropuerto: {
       type: DataTypes.STRING(10),
       primaryKey: true,
       allowNull: false,
@@ -38,8 +38,8 @@ Aeropuerto.init(
   },
   {
     sequelize,
-    modelName: "Aeropuerto",
-    tableName: "Aeropuerto",
+    modelName: "aeropuerto",
+    tableName: "aeropuerto",
     timestamps: false,
   }
 )

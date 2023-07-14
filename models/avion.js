@@ -6,13 +6,13 @@ class Avion extends Model {}
 
 Avion.init(
   {
-    idAvion: {
+    idavion: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
       unique: true,
     },
-    idModelo: {
+    idmodelo: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -24,27 +24,27 @@ Avion.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    capacidadTurista: {
+    capacidadturista: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    capacidadPremium: {
+    capacidadpremium: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    capacidadBusiness: {
+    capacidadbusiness: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
   },
   {
     sequelize,
-    modelName: "Avion",
-    tableName: "Avion",
+    modelName: "avion",
+    tableName: "avion",
     timestamps: false,
   }
 )
 
-Avion.belongsTo(ModeloAvion, { foreignKey: "idModelo", targetKey: "idModelo" })
+Avion.belongsTo(ModeloAvion, { foreignKey: "idmodelo", targetKey: "idmodelo" })
 
 module.exports = Avion
