@@ -8,6 +8,7 @@ const bp = require("body-parser")
 const avionRouter = require("./routes/aviones")
 const aeropuertoRouter = require("./routes/aeropuertos")
 const rutasRouter = require("./routes/rutas")
+const clienteRouter = require("./routes/clientes")
 
 app.use(cors())
 app.use(express.json())
@@ -17,6 +18,8 @@ app.use(bp.urlencoded({ extended: true }))
 app.use("/api", aeropuertoRouter)
 app.use("/api", avionRouter)
 app.use("/api", rutasRouter)
+app.use("/api", clienteRouter)
+
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {

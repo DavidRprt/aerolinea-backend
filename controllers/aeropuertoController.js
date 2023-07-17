@@ -2,7 +2,7 @@ const Aeropuerto = require("../models/aeropuerto")
 
 const getAll = async (req, res) => {
   const aeropuertos = await Aeropuerto.findAll()
-  res.json(aeropuertos)
+  res.status(200).json(aeropuertos)
 }
 
 const postAeropuerto = async (req, res) => {

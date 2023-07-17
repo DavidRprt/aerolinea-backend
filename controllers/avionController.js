@@ -9,7 +9,7 @@ const getAviones = async (req, res) => {
       attributes: ["modelo"],
     },
   })
-  res.json(aviones)
+  res.status(200).json(aviones)
 }
 
 const postAviones = async (req, res) => {
@@ -48,7 +48,7 @@ const deleteAviones = async (req, res) => {
 
 const getModelos = async (req, res) => {
   const modelos = await ModeloAvion.findAll()
-  res.json(modelos)
+  res.status(200).json(modelos)
 }
 
 const postModelos = async (req, res) => {
@@ -75,7 +75,7 @@ const deleteModelos = async (req, res) => {
       return res.status(404).json({ mensaje: "Modelo no encontrado" })
     }
 
-    res.json({ mensaje: "Modelo eliminado correctamente" })
+    res.status(200).json({ mensaje: "Modelo eliminado correctamente" })
   } catch (error) {
     // Ocurrió un error durante la eliminación del modelo
     res.status(500).json({

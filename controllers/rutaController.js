@@ -2,14 +2,19 @@ const Ruta = require("../models/rutas")
 const Avion = require("../models/avion")
 
 const getRutas = async (req, res) => {
-  const rutas = await Ruta.findAll({
-    attributes: { exclude: ["idAvion"] },
-    include: {
-      model: Avion,
-      attributes: ["nombre"],
-    },
-  })
-  res.json(rutas)
+  try {
+    const rutas = await Ruta.findAll({
+      attributes: { exclude: ["idAvion"] },
+      include: {
+        model: Avion,
+        attributes: ["nombre"],
+      },
+    })
+    res.status(200).json(rutas)
+  } catch (error) {
+    console.error("Error al obtener las rutas:", error)
+    res.status(500).json({ error: "Error al obtener las rutas" })
+  }
 }
 
 const postRutas = async (req, res) => {
