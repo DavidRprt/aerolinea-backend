@@ -9,6 +9,7 @@ const avionRouter = require("./routes/aviones")
 const aeropuertoRouter = require("./routes/aeropuertos")
 const rutasRouter = require("./routes/rutas")
 const clienteRouter = require("./routes/clientes")
+const pasajeRouter = require("./routes/pasajes")
 
 app.use(cors())
 app.use(express.json())
@@ -19,6 +20,7 @@ app.use("/api", aeropuertoRouter)
 app.use("/api", avionRouter)
 app.use("/api", rutasRouter)
 app.use("/api", clienteRouter)
+app.use("/api", pasajeRouter)
 
 
 const PORT = process.env.PORT || 3001

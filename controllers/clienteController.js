@@ -1,40 +1,134 @@
 const { Op } = require("sequelize")
 const Cliente = require("../models/cliente")
+const Pasaje = require("../models/pasaje")
+const Ruta = require("../models/rutas")
+const Avion = require("../models/avion")
 
 const getClientes = async (req, res) => {
-  const clientes = await Cliente.findAll()
-  res.status(200).json(clientes)
+  try {
+    const clientes = await Cliente.findAll({
+      include: [
+        {
+          model: Pasaje,
+          include: [
+            {
+              model: Ruta,
+              attributes: [
+                "idorigen",
+                "iddestino",
+                "horariosalida",
+                "duracion",
+              ],
+              include: [
+                {
+                  model: Avion,
+                  attributes: ["nombre"],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    })
+
+    res.status(200).json(clientes)
+  } catch (error) {
+    console.error("Error al obtener los clientes:", error)
+    res.status(500).json({ error: "Error al obtener los clientes" })
+  }
 }
+
+
+const postCliente = async (req, res) => {
+  try {
+    const nuevoCliente = await Cliente.create(req.body)
+    res.status(201).json(nuevoCliente)
+  } catch (error) {
+    console.error("Error al reguistrar el cliente:", error)
+    res.status(500).json({ error: "Error al registrar el cliente" })
+  }}
 
 const getClientesPasaporte = async (req, res) => {
   const pasaporte = req.params.busqueda
-  const clientes = await Cliente.findAll({
-    where: { pasaporte: { [Op.iLike]: `%${pasaporte}%` } },
-  })
-  if (clientes.length === 0) {
-    res
-      .status(404)
-      .json({
+  try {
+    const clientes = await Cliente.findAll({
+      where: { pasaporte: { [Op.iLike]: `%${pasaporte}%` } },
+      include: [
+        {
+          model: Pasaje,
+          include: [
+            {
+              model: Ruta,
+              attributes: [
+                "idorigen",
+                "iddestino",
+                "horariosalida",
+                "duracion",
+              ],
+              include: [
+                {
+                  model: Avion,
+                  attributes: ["nombre"],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    })
+
+    if (clientes.length === 0) {
+      return res.status(404).json({
         message: "No se encontraron clientes con el pasaporte proporcionado",
       })
-  } else {
+    }
+
     res.status(200).json(clientes)
+  } catch (error) {
+    console.error("Error al obtener los clientes:", error)
+    res.status(500).json({ error: "Error al obtener los clientes" })
   }
 }
 
 const getClientesEmail = async (req, res) => {
   const email = req.params.busqueda
-  const clientes = await Cliente.findAll({
-    where: { email: { [Op.iLike]: `%${email}%` } },
-  })
-  if (clientes.length === 0) {
-    res
-      .status(404)
-      .json({
+  try {
+    const clientes = await Cliente.findAll({
+      where: { email: { [Op.iLike]: `%${email}%` } },
+      include: [
+        {
+          model: Pasaje,
+          include: [
+            {
+              model: Ruta,
+              attributes: [
+                "idorigen",
+                "iddestino",
+                "horariosalida",
+                "duracion",
+              ],
+              include: [
+                {
+                  model: Avion,
+                  attributes: ["nombre"],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    })
+
+    if (clientes.length === 0) {
+      return res.status(404).json({
         message: "No se encontraron clientes con el email proporcionado",
       })
-  } else {
+    }
+
     res.status(200).json(clientes)
+  } catch (error) {
+    console.error("Error al obtener los clientes:", error)
+    res.status(500).json({ error: "Error al obtener los clientes" })
   }
 }
 
@@ -42,7 +136,25 @@ const getClienteById = async (req, res) => {
   const idcliente = req.params.idcliente
 
   try {
-    const cliente = await Cliente.findByPk(idcliente)
+   const cliente = await Cliente.findByPk(idcliente, {
+     include: [
+       {
+         model: Pasaje,
+         include: [
+           {
+             model: Ruta,
+             attributes: ["idorigen", "iddestino", "horariosalida", "duracion"],
+             include: [
+               {
+                 model: Avion,
+                 attributes: ["nombre"],
+               },
+             ],
+           },
+         ],
+       },
+     ],
+   })
 
     if (!cliente) {
       return res.status(404).json({ message: "Cliente no encontrado" })
@@ -55,4 +167,4 @@ const getClienteById = async (req, res) => {
   }
 }
 
-module.exports = { getClientes, getClientesPasaporte, getClientesEmail, getClienteById }
+module.exports = { getClientes, getClientesPasaporte, getClientesEmail, getClienteById, postCliente }
