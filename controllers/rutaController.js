@@ -1,5 +1,6 @@
 const Ruta = require("../models/rutas")
 const Avion = require("../models/avion")
+const { Op } = require("sequelize")
 
 const getRutas = async (req, res) => {
   try {
@@ -51,8 +52,33 @@ const deleteRutas = async (req, res) => {
   }
 }
 
+const getRutasByAirport = async (req, res) => {
+  const idorigen = req.params.idorigen
+  const iddestino = req.params.iddestino
+
+  try {
+    const rutas = await Ruta.findAll({
+      attributes: { exclude: ["idAvion"] },
+      where: {
+        idorigen: { [Op.iLike]: idorigen },
+        iddestino: { [Op.iLike]: iddestino },
+      },
+      include: {
+        model: Avion,
+        attributes: ["nombre"],
+      },
+    })
+    res.status(200).json(rutas)
+
+  } catch (error) {
+    console.error("Error al obtener las rutas:", error)
+    res.status(500).json({ error: "Error al obtener las rutas" })
+  }
+}
+
 module.exports = {
   getRutas,
   postRutas,
-  deleteRutas
+  deleteRutas,
+  getRutasByAirport
 }
