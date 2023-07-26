@@ -2,6 +2,7 @@ const { Sequelize, Model, DataTypes } = require("sequelize")
 const sequelize = require("../utils/sequelize")
 const Ruta = require("./rutas")
 const Cliente = require("./cliente")
+const Reserva = require("./reserva")
 
 class Pasaje extends Model {}
 
@@ -26,12 +27,16 @@ Pasaje.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    fechaida: {
-      type: DataTypes.DATE,
-      allowNull: false,
+    idreserva: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
     },
-    fechavuelta: {
+    fecha: {
       type: DataTypes.DATE,
+      allowNull: true,
+    },
+    precio: {
+      type: DataTypes.FLOAT,
       allowNull: true,
     },
   },
@@ -45,6 +50,8 @@ Pasaje.init(
 
 Pasaje.belongsTo(Ruta, { foreignKey: "idruta" })
 Pasaje.belongsTo(Cliente, { foreignKey: "idcliente" })
+Pasaje.belongsTo(Reserva, { foreignKey: "idreserva" })
 Cliente.hasMany(Pasaje, { foreignKey: "idcliente" })
+Reserva.hasMany(Pasaje, { foreignKey: "idreserva" })
 
 module.exports = Pasaje
