@@ -52,7 +52,7 @@ const getClientesPasaporte = async (req, res) => {
   const pasaporte = req.params.busqueda
   try {
     const clientes = await Cliente.findAll({
-      where: { pasaporte: { [Op.iLike]: `%${pasaporte}%` } },
+      where: { pasaporte: pasaporte },
       include: [
         {
           model: Pasaje,
