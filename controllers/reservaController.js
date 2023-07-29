@@ -102,12 +102,12 @@ const getReservaById = async (req, res) => {
 }
 
 const crearReserva = async (req, res) => {
-  const { idmetodo, fehcaemision, preciototal } = req.body
+  const { idmetodo, fechaemision, preciototal } = req.body
 
   try {
     const reserva = await Reserva.create({
       idmetodo,
-      fehcaemision,
+      fechaemision,
       preciototal,
     })
 

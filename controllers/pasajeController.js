@@ -94,4 +94,24 @@ const getPasajesByClienteId = async (req, res) => {
   }
 }
 
-module.exports = { getPasajes, getPasajesByClienteId, getPasajesByAirport }
+const crearPasaje = async (req, res) => {
+  const { idcliente, idruta, idclase, idreserva, fecha, precio } = req.body
+
+  try {
+    const nuevoPasaje = await Pasaje.create({
+      idcliente,
+      idruta,
+      idclase,
+      idreserva,
+      fecha,
+      precio,
+    })
+
+    res.status(201).json(nuevoPasaje)
+  } catch (error) {
+    console.error("Error al crear el pasaje:", error)
+    res.status(500).json({ error: "Error al crear el pasaje" })
+  }
+}
+
+module.exports = { getPasajes, getPasajesByClienteId, getPasajesByAirport, crearPasaje }

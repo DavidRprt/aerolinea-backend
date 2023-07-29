@@ -17,7 +17,7 @@ Reserva.init(
       type: DataTypes.STRING(10),
       allowNull: false,
     },
-    fehcaemision: {
+    fechaemision: {
       type: DataTypes.DATE,
       allowNull: false,
     },
