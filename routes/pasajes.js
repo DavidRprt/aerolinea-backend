@@ -5,6 +5,7 @@ const pasajeController = require("../controllers/pasajeController")
 router.get("/pasajes", pasajeController.getPasajes)
 router.get("/pasajes/:idcliente", pasajeController.getPasajesByClienteId)
 router.get("/pasajes/:idorigen/:iddestino", pasajeController.getPasajesByAirport)
+router.post("/pasajes", pasajeController.crearPasaje)
 
 
 module.exports = router

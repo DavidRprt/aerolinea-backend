@@ -7,5 +7,6 @@ router.get("/clientes/pasaporte/:busqueda", clienteController.getClientesPasapor
 router.get("/clientes/email/:busqueda", clienteController.getClientesEmail)
 router.get("/clientes/:idcliente", clienteController.getClienteById)
 router.post("/clientes", clienteController.postCliente)
+router.patch("/clientes/:idcliente", clienteController.updateClienteMillas)
 
 module.exports = router

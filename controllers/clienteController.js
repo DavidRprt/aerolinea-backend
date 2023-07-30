@@ -167,4 +167,37 @@ const getClienteById = async (req, res) => {
   }
 }
 
-module.exports = { getClientes, getClientesPasaporte, getClientesEmail, getClienteById, postCliente }
+const updateClienteMillas = async (req, res) => {
+  const id = req.params.idcliente
+  const millas = req.body.millas
+
+  try {
+    // encontrar el cliente
+    const cliente = await Cliente.findByPk(id)
+    if (!cliente) {
+      return res.status(404).json({ message: "Cliente no encontrado" })
+    }
+
+    // actualizar las millas
+    cliente.millas += millas
+    await cliente.save()
+
+    res.json(cliente)
+  } catch (error) {
+    console.error("Error al actualizar las millas del cliente:", error)
+    res
+      .status(500)
+      .json({ error: "Error al actualizar las millas del cliente" })
+  }
+}
+
+
+
+module.exports = {
+  getClientes,
+  getClientesPasaporte,
+  getClientesEmail,
+  getClienteById,
+  postCliente,
+  updateClienteMillas,
+}
