@@ -35,6 +35,13 @@ const login = async (req, res) => {
     jwt.sign(payload, secretKey, { expiresIn: "1h" }, (error, token) => {
       if (error) throw error
 
+      // Configurando las cookies
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 60 * 60 * 1000, // 1 hora
+      })
+
       res.status(200).json({
         token: token,
         user: {
