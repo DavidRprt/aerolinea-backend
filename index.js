@@ -13,6 +13,7 @@ const pasajeRouter = require("./routes/pasajes")
 const reservaRouter = require("./routes/reservas")
 const signUpRouter = require("./routes/signUp")
 const loginRouter = require('./routes/login')
+const tripulacionRouter = require("./routes/tripulacion")
 
 app.use(cors())
 app.use(express.json())
@@ -27,7 +28,7 @@ app.use("/api", pasajeRouter)
 app.use("/api", reservaRouter)
 app.use("/api", signUpRouter)
 app.use("/api", loginRouter)
-
+app.use("/api", tripulacionRouter)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
