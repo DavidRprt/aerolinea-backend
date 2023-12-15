@@ -48,6 +48,37 @@ const postCliente = async (req, res) => {
     res.status(500).json({ error: "Error al registrar el cliente" })
   }}
 
+  const obtenerTopClientes = async (req, res) => {
+    try {
+      const topClientes = await Cliente.findAll({
+        attributes: ["idcliente", "nombre", "apellido", "email", "millas"],
+        order: [["millas", "DESC"]],
+        limit: 5,
+      })
+
+      const clientesConVuelos = await Promise.all(
+        topClientes.map(async (cliente) => {
+          const cantidadVuelos = await Pasaje.count({
+            where: { idcliente: cliente.idcliente },
+          })
+          // Calcular el promedio de millas por vuelo
+          const millasPromedioPorVuelo =
+            cantidadVuelos > 0 ? cliente.millas / cantidadVuelos : 0
+          return {
+            ...cliente.dataValues,
+            cantidadVuelos,
+            millasPromedioPorVuelo, // Agregar este campo al objeto
+          }
+        })
+      )
+
+      res.status(200).json(clientesConVuelos)
+    } catch (error) {
+      console.error("Error al obtener los clientes top:", error)
+      res.status(500).json({ error: "Error al obtener los clientes" })
+    }
+  }
+
 const getClientesPasaporte = async (req, res) => {
   const pasaporte = req.params.busqueda
   try {
@@ -200,4 +231,5 @@ module.exports = {
   getClienteById,
   postCliente,
   updateClienteMillas,
+  obtenerTopClientes,
 }
