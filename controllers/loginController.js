@@ -1,7 +1,12 @@
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const Empleado = require("../models/empleado")
+const Token = require("../models/token")
 const Empleo = require("../models/empleo")
+const crypto = require("crypto")
+const secretKey = process.env.SECRET
+const { sendEmail } = require("../utils/nodemailer")
+const { Op } = require("sequelize")
 
 const login = async (req, res) => {
   const { email, password } = req.body
@@ -60,4 +65,78 @@ const login = async (req, res) => {
   }
 }
 
-module.exports = { login }
+const requestResetPassword = async (req, res) => {
+  const { email } = req.body
+
+  try {
+    const user = await Empleado.findOne({ where: { email } })
+    if (!user) {
+      return res.status(400).json({ error: "Usuario no encontrado" })
+    }
+
+    const resetToken = crypto.randomBytes(20).toString("hex")
+
+    const expirationTime = 3600000 // 1 hora en milisegundos
+    const fecha_expiracion = new Date(Date.now() + expirationTime)
+    const tokenEntry = await Token.create({
+      idempleado: user.idempleado,
+      token: resetToken,
+      fecha_expiracion: fecha_expiracion,
+    })
+
+    const resetLink = `http://localhost:3000/reset-password/${resetToken}`
+
+    await sendEmail(
+      user.email,
+      "Recuperación de Contraseña",
+      `Por favor, usa este enlace para restablecer tu contraseña: ${resetLink}`
+    )
+
+    res.status(200).json({ message: "Correo de recuperación enviado" })
+  } catch (error) {
+    console.error("Error en solicitud de recuperación:", error)
+    res.status(500).json({ error: "Error interno" })
+  }
+}
+
+const resetPassword = async (req, res) => {
+  const { token, newPassword } = req.body
+
+  console.log(token)
+  try {
+    const tokenEntry = await Token.findOne({
+      where: {
+        token: token,
+        fecha_expiracion: {
+          [Op.gt]: new Date(), 
+        },
+      },
+    })
+
+    if (!tokenEntry) {
+      return res.status(400).json({ error: "Token inválido o expirado" })
+    }
+
+    const user = await Empleado.findOne({
+      where: { idempleado: tokenEntry.idempleado },
+    })
+    if (!user) {
+      return res.status(400).json({ error: "Usuario no encontrado" })
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10)
+
+    user.passwordhash = hashedPassword
+    await user.save()
+
+    await tokenEntry.destroy()
+
+    res.status(200).json({ message: "Contraseña actualizada correctamente" })
+  } catch (error) {
+    console.error("Error en restablecimiento de contraseña:", error)
+    res.status(500).json({ error: "Error interno" })
+  }
+}
+
+
+module.exports = { login, requestResetPassword, resetPassword }
