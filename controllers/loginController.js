@@ -139,4 +139,64 @@ const resetPassword = async (req, res) => {
 }
 
 
-module.exports = { login, requestResetPassword, resetPassword }
+const getAllEmployees = async (req, res) => {
+  try {
+    const employees = await Empleado.findAll()
+
+    // Si no se encuentran empleados
+    if (employees.length === 0) {
+      return res.status(404).json({ error: "No se encontraron empleados" })
+    }
+
+    res.status(200).json(employees)
+  } catch (error) {
+    console.error("Error al obtener empleados:", error)
+    res.status(500).json({ error: "Error interno" })
+  }
+}
+
+const getAllJobs = async (req, res) => {
+  try {
+    const jobs = await Empleo.findAll()
+
+    // Si no se encuentran empleos
+    if (jobs.length === 0) {
+      return res.status(404).json({ error: "No se encontraron empleos" })
+    }
+
+    res.status(200).json(jobs)
+  } catch (error) {
+    console.error("Error al obtener empleos:", error)
+    res.status(500).json({ error: "Error interno" })
+  }
+}
+
+const updateEmployeeJob = async (req, res) => {
+  const { idempleado, idempleo } = req.body
+
+  try {
+    const empleado = await Empleado.findByPk(idempleado)
+
+    if (!empleado) {
+      return res.status(404).json({ error: "Empleado no encontrado" })
+    }
+
+    empleado.idempleo = idempleo
+    await empleado.save()
+
+    res.status(200).json({ message: "Empleo actualizado correctamente" })
+  } catch (error) {
+    console.error("Error al actualizar el empleo del empleado:", error)
+    res.status(500).json({ error: "Error interno del servidor" })
+  }
+}
+
+
+module.exports = {
+  login,
+  requestResetPassword,
+  resetPassword,
+  getAllEmployees,
+  getAllJobs,
+  updateEmployeeJob
+}
