@@ -8,6 +8,11 @@ router.get("/tripulantes", tripulantesController.getAllTripulantes)
 router.get("/tripulacion", tripulantesController.getAllTripulaciones)
 
 router.post("/tripulantes", validateToken, tripulantesController.addTripulante)
+router.put(
+  "/tripulantes/:idtripulante",
+  validateToken,
+  tripulantesController.updateTripulante
+)
 
 
 

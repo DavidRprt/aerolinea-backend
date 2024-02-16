@@ -83,11 +83,42 @@ const addTripulante = async (req, res) => {
   }
 }
 
+// Actualizar un tripulante
+const updateTripulante = async (req, res) => {
+  try {
+    const { idtripulante } = req.params;
+    const { nombre, apellido, idcargo, idtripulacion } = req.body;
+
+    if (!idtripulante) {
+      return res.status(400).json({ error: "El ID del tripulante es obligatorio." });
+    }
+
+    const tripulante = await Tripulante.findByPk(idtripulante);
+
+    if (!tripulante) {
+      return res.status(404).json({ error: "Tripulante no encontrado." });
+    }
+
+    tripulante.nombre = nombre || tripulante.nombre;
+    tripulante.apellido = apellido || tripulante.apellido;
+    tripulante.idcargo = idcargo || tripulante.idcargo;
+    tripulante.idtripulacion = idtripulacion || tripulante.idtripulacion;
+
+    await tripulante.save();
+
+    res.status(200).json(tripulante);
+  } catch (error) {
+    console.error("Error al actualizar el tripulante:", error);
+    res.status(500).json({ error: "Error al actualizar el tripulante." });
+  }
+};
+
 
 
 module.exports = {
   getAllCargos,
   getAllTripulantes,
   getAllTripulaciones,
-  addTripulante
+  addTripulante,
+  updateTripulante
 }
