@@ -67,6 +67,7 @@ const login = async (req, res) => {
 
 const requestResetPassword = async (req, res) => {
   const { email } = req.body
+  const baseUrl = process.env.REACT_APP_BASE_URL
 
   try {
     const user = await Empleado.findOne({ where: { email } })
@@ -84,7 +85,7 @@ const requestResetPassword = async (req, res) => {
       fecha_expiracion: fecha_expiracion,
     })
 
-    const resetLink = `http://localhost:3000/reset-password/${resetToken}`
+    const resetLink = `${baseUrl}/reset-password/${resetToken}`
 
     await sendEmail(
       user.email,
@@ -108,7 +109,7 @@ const resetPassword = async (req, res) => {
       where: {
         token: token,
         fecha_expiracion: {
-          [Op.gt]: new Date(), 
+          [Op.gt]: new Date(),
         },
       },
     })
@@ -137,7 +138,6 @@ const resetPassword = async (req, res) => {
     res.status(500).json({ error: "Error interno" })
   }
 }
-
 
 const getAllEmployees = async (req, res) => {
   try {
@@ -191,12 +191,11 @@ const updateEmployeeJob = async (req, res) => {
   }
 }
 
-
 module.exports = {
   login,
   requestResetPassword,
   resetPassword,
   getAllEmployees,
   getAllJobs,
-  updateEmployeeJob
+  updateEmployeeJob,
 }
