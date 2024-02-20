@@ -1,15 +1,24 @@
 const { Sequelize } = require("sequelize")
 
-
-// Implementando patrón de diseño singleton
 class SequelizeSingleton {
   constructor() {
     if (!SequelizeSingleton.instance) {
-      SequelizeSingleton.instance = new Sequelize(process.env.DATABASE_URL, {
-        quoteIdentifiers: false,
-        host: "localhost",
+      const dbConfig = {
+        host: process.env.DB_HOST,
+        username: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME,
+        port: process.env.DB_PORT,
         dialect: "postgres",
-      })
+        dialectOptions: {
+          ssl: {
+            require: true,
+            rejectUnauthorized: false, 
+          },
+        },
+      }
+
+      SequelizeSingleton.instance = new Sequelize(dbConfig)
 
       // Verificar la conexión con la base de datos
       SequelizeSingleton.instance
@@ -17,6 +26,7 @@ class SequelizeSingleton {
         .then(() => console.log("Conexión exitosa con la base de datos"))
         .catch((err) => console.error("Error de conexión o consulta:", err))
     }
+
     return SequelizeSingleton.instance
   }
 }
