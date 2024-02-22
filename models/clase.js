@@ -11,7 +11,6 @@ Clase.init(
       allowNull: false,
       unique: true,
     },
-    // Otros campos de la tabla clase si los tienes...
   },
   {
     sequelize,

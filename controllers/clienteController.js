@@ -56,6 +56,7 @@ const postCliente = async (req, res) => {
         limit: 5,
       })
 
+
       const clientesConVuelos = await Promise.all(
         topClientes.map(async (cliente) => {
           const cantidadVuelos = await Pasaje.count({

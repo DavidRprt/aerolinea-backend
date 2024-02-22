@@ -37,6 +37,7 @@ const getAllTripulantes = async (req, res) => {
 
 // Obtener todas las tripulaciones incluyendo un array con cada miembro y sus datos
 const getAllTripulaciones = async (req, res) => {
+  console.log("HEREEE")
   try {
     const tripulaciones = await Tripulacion.findAll({
       include: [
@@ -56,7 +57,6 @@ const getAllTripulaciones = async (req, res) => {
 // Añadir un nuevo tripulante
 const addTripulante = async (req, res) => {
   try {
-    console.log(req.body)
     const { nombre, apellido, cargo } = req.body
     const idcargo = cargo
     const idtripulacion = 13

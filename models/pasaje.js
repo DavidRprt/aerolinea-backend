@@ -3,6 +3,7 @@ const sequelize = require("../utils/sequelize")
 const Ruta = require("./rutas")
 const Cliente = require("./cliente")
 const Reserva = require("./reserva")
+const Clase = require("./clase")
 
 class Pasaje extends Model {}
 
@@ -51,6 +52,7 @@ Pasaje.init(
 Pasaje.belongsTo(Ruta, { foreignKey: "idruta" })
 Pasaje.belongsTo(Cliente, { foreignKey: "idcliente" })
 Pasaje.belongsTo(Reserva, { foreignKey: "idreserva" })
+Pasaje.belongsTo(Clase, { foreignKey: "idclase" })
 Cliente.hasMany(Pasaje, { foreignKey: "idcliente" })
 Reserva.hasMany(Pasaje, { foreignKey: "idreserva" })
 

@@ -24,7 +24,6 @@ const postAviones = async (req, res) => {
 
 const deleteAviones = async (req, res) => {
   const id = req.body.idAvion
-  console.log(id)
 
   try {
     const avionEliminado = await Avion.destroy({
@@ -63,7 +62,6 @@ const postModelos = async (req, res) => {
 
 const deleteModelos = async (req, res) => {
   const id = req.body.idModelo
-  console.log(id)
 
   try {
     const modeloEliminado = await ModeloAvion.destroy({

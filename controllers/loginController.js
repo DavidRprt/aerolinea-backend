@@ -102,15 +102,12 @@ const requestResetPassword = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   const { token, newPassword } = req.body
-
-  console.log(token)
   try {
+    const allTokens = await Token.findAll()
+
     const tokenEntry = await Token.findOne({
       where: {
-        token: token,
-        fecha_expiracion: {
-          [Op.gt]: new Date(),
-        },
+        token: token, 
       },
     })
 

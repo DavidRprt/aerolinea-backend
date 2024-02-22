@@ -3,6 +3,8 @@ const Pasaje = require("../models/pasaje")
 const Cliente = require("../models/cliente")
 const Ruta = require("../models/rutas")
 const Avion = require("../models/avion")
+const Clase = require("../models/clase")
+const sequelize = require("../utils/sequelize")
 
 const getPasajes = async (req, res) => {
   try {
@@ -83,7 +85,7 @@ const getPasajesByClienteId = async (req, res) => {
             model: Avion,
             attributes: ["nombre"],
           },
-        ]
+        ],
       },
     })
 
@@ -114,4 +116,37 @@ const crearPasaje = async (req, res) => {
   }
 }
 
-module.exports = { getPasajes, getPasajesByClienteId, getPasajesByAirport, crearPasaje }
+const getPasajesPorClase = async (req, res) => {
+  try {
+    const frecuenciaPorClase = await Pasaje.findAll({
+      attributes: [
+        "idclase",
+        [sequelize.fn("COUNT", sequelize.col("idpasaje")), "cantidadPasajes"],
+        [sequelize.fn("AVG", sequelize.col("precio")), "precioPromedio"],
+      ],
+      group: ["idclase"],
+      raw: true,
+    })
+
+    const resultados = frecuenciaPorClase.map((item) => ({
+      clase: item.idclase,
+      cantidadPasajes: item.cantidadPasajes,
+      precioPromedio: parseFloat(item.precioPromedio).toFixed(2),
+    }))
+
+    res.status(200).json(resultados)
+  } catch (error) {
+    console.error("Error al obtener la frecuencia de pasajes por clase:", error)
+    res
+      .status(500)
+      .json({ error: "Error al obtener la frecuencia de pasajes por clase" })
+  }
+}
+
+module.exports = {
+  getPasajes,
+  getPasajesByClienteId,
+  getPasajesByAirport,
+  crearPasaje,
+  getPasajesPorClase,
+}

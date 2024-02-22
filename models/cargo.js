@@ -5,7 +5,7 @@ class Cargo extends Model {}
 
 Cargo.init(
   {
-    idCargo: {
+    idcargo: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,

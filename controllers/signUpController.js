@@ -2,6 +2,24 @@ const bcrypt = require("bcrypt")
 const Empleado = require("../models/empleado")
 const Empleo = require("../models/empleo")
 
+const validarEmail = (email) => {
+  if (email.length === 0) {
+    return { valido: false, mensaje: "El email no puede estar vacío" } // Flujo 1
+  } else if (!email.includes("@")) {
+    return { valido: false, mensaje: "El email debe contener @" } // Flujo 2
+  } else if (email.startsWith("@") || email.endsWith("@")) {
+    return {
+      valido: false,
+      mensaje: "El email no puede empezar o terminar con @", // Flujo 3
+    }
+  } else if (!email.includes(".")) {
+    return { valido: false, mensaje: "El email debe contener un punto" } // Flujo 4
+  } else if (email.lastIndexOf(".") < email.indexOf("@")) {
+    return { valido: false, mensaje: "El punto debe estar después del @" } // Flujo 5
+  }
+  return { valido: true, mensaje: "Email válido" } // Flujo 6
+}
+
 const signUp = async (req, res) => {
   const { email, password, nombre, apellido, idempleo } = req.body
 
@@ -11,10 +29,15 @@ const signUp = async (req, res) => {
   const formattedApellido =
     apellido.charAt(0).toUpperCase() + apellido.slice(1).toLowerCase()
 
-  const saltRounds = 10
-  const passwordHash = await bcrypt.hash(password, saltRounds)
+  const validacionEmail = validarEmail(formattedEmail)
+
+  if (!validacionEmail.valido) {
+    return res.status(400).json({ error: validacionEmail.mensaje })
+  }
 
   try {
+    const saltRounds = 10
+    const passwordHash = await bcrypt.hash(password, saltRounds)
     const newUser = await Empleado.create({
       email: formattedEmail,
       passwordhash: passwordHash,

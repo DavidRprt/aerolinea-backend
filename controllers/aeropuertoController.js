@@ -17,7 +17,6 @@ const postAeropuerto = async (req, res) => {
 
 const deleteAeropuerto = async (req, res) => {
   const id = req.body.idAeropuerto
-  console.log(id)
 
   try {
     const aeropuertoEliminado = await Aeropuerto.destroy({
