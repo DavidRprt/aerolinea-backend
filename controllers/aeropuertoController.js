@@ -1,4 +1,6 @@
 const Aeropuerto = require("../models/aeropuerto")
+const sequelize = require("../utils/sequelize")
+const Ruta = require("../models/rutas")
 
 const getAll = async (req, res) => {
   const aeropuertos = await Aeropuerto.findAll()
@@ -38,8 +40,34 @@ const deleteAeropuerto = async (req, res) => {
   }
 }
 
+const getAeropuertosConMasRutas = async (req, res) => {
+  try {
+    const aeropuertosConMasRutas = await sequelize.query(
+      `SELECT idaeropuerto, nombre, ciudad, pais, latitud, longitud, timezone, 
+      (
+        SELECT COUNT(*) 
+        FROM ruta 
+        WHERE ruta.idorigen = aeropuerto.idaeropuerto 
+        OR ruta.iddestino = aeropuerto.idaeropuerto
+      ) AS totalRutas
+      FROM aeropuerto
+      ORDER BY totalRutas DESC`,
+      { type: sequelize.QueryTypes.SELECT }
+    )
+
+    res.status(200).json(aeropuertosConMasRutas)
+  } catch (error) {
+    console.error("Error al obtener los aeropuertos con más rutas:", error)
+    res
+      .status(500)
+      .json({ error: "Error al obtener los aeropuertos con más rutas" })
+  }
+}
+
+
 module.exports = {
   getAll,
   postAeropuerto,
-  deleteAeropuerto
+  deleteAeropuerto,
+  getAeropuertosConMasRutas,
 }

@@ -104,9 +104,8 @@ const getReservaById = async (req, res) => {
 const crearReserva = async (req, res) => {
   const { idmetodo, fechaemision, preciototal } = req.body
 
-  const fixedid = idmetodo.toUpperCase()
+  const fixedid = idmetodo
 
-  if (fixedid === "CREDITO" || fixedid === "DEBITO" ) fixedid="TARJETA"
   try {
     const reserva = await Reserva.create({
       idmetodo: fixedid,

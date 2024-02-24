@@ -127,8 +127,6 @@ const resetPassword = async (req, res) => {
     user.passwordhash = hashedPassword
     await user.save()
 
-    await tokenEntry.destroy()
-
     res.status(200).json({ message: "Contraseña actualizada correctamente" })
   } catch (error) {
     console.error("Error en restablecimiento de contraseña:", error)

@@ -88,6 +88,10 @@ Ruta.init(
 )
 
 Ruta.belongsTo(Avion, { foreignKey: "idavion" })
+Aeropuerto.hasMany(Ruta, { foreignKey: "idorigen", as: "RutasOrigen" })
+Aeropuerto.hasMany(Ruta, { foreignKey: "iddestino", as: "RutasDestino" })
+Ruta.belongsTo(Aeropuerto, { foreignKey: "idorigen", as: "Origen" })
+Ruta.belongsTo(Aeropuerto, { foreignKey: "iddestino", as: "Destino" })
 
 
 module.exports = Ruta

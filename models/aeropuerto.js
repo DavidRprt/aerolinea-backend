@@ -3,6 +3,7 @@ const sequelize = require("../utils/sequelize")
 
 
 class Aeropuerto extends Model {}
+
 Aeropuerto.init(
   {
     idaeropuerto: {

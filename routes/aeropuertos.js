@@ -4,7 +4,10 @@ const aeropuertoController = require("../controllers/aeropuertoController")
 const { validateToken } = require("../utils/middleware")
 
 router.get("/aeropuertos", aeropuertoController.getAll)
-
+router.get(
+  "/aeropuertos/mas-rutas",
+  aeropuertoController.getAeropuertosConMasRutas
+)
 router.post("/aeropuertos", validateToken, aeropuertoController.postAeropuerto)
 
 router.delete(
