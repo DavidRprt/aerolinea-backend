@@ -75,15 +75,12 @@ const requestResetPassword = async (req, res) => {
       return res.status(400).json({ error: "Usuario no encontrado" })
     }
 
-    const resetToken = crypto.randomBytes(20).toString("hex")
-
-    const expirationTime = 3600000 // 1 hora en milisegundos
-    const fecha_expiracion = new Date(Date.now() + expirationTime)
-    const tokenEntry = await Token.create({
-      idempleado: user.idempleado,
-      token: resetToken,
-      fecha_expiracion: fecha_expiracion,
-    })
+    const expirationTime = "1h" // 1 hora
+    const resetToken = jwt.sign(
+      { idempleado: user.idempleado },
+      process.env.SECRET,
+      { expiresIn: expirationTime }
+    )
 
     const resetLink = `${baseUrl}/reset-password/${resetToken}`
 
@@ -102,37 +99,31 @@ const requestResetPassword = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   const { token, newPassword } = req.body
+
   try {
-    const allTokens = await Token.findAll()
-
-    const tokenEntry = await Token.findOne({
-      where: {
-        token: token, 
-      },
-    })
-
-    if (!tokenEntry) {
-      return res.status(400).json({ error: "Token inválido o expirado" })
-    }
-
+    const decoded = jwt.verify(token, process.env.SECRET)
     const user = await Empleado.findOne({
-      where: { idempleado: tokenEntry.idempleado },
+      where: { idempleado: decoded.idempleado },
     })
+
     if (!user) {
       return res.status(400).json({ error: "Usuario no encontrado" })
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10)
-
     user.passwordhash = hashedPassword
     await user.save()
 
     res.status(200).json({ message: "Contraseña actualizada correctamente" })
   } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      return res.status(400).json({ error: "Token inválido o expirado" })
+    }
     console.error("Error en restablecimiento de contraseña:", error)
-    res.status(500).json({ error: "Error interno" })
+    return res.status(500).json({ error: "Error interno" })
   }
 }
+
 
 const getAllEmployees = async (req, res) => {
   try {

@@ -38,7 +38,6 @@ const getClientes = async (req, res) => {
   }
 }
 
-
 const postCliente = async (req, res) => {
   try {
     const nuevoCliente = await Cliente.create(req.body)
@@ -46,39 +45,39 @@ const postCliente = async (req, res) => {
   } catch (error) {
     console.error("Error al reguistrar el cliente:", error)
     res.status(500).json({ error: "Error al registrar el cliente" })
-  }}
-
-  const obtenerTopClientes = async (req, res) => {
-    try {
-      const topClientes = await Cliente.findAll({
-        attributes: ["idcliente", "nombre", "apellido", "email", "millas"],
-        order: [["millas", "DESC"]],
-        limit: 5,
-      })
-
-
-      const clientesConVuelos = await Promise.all(
-        topClientes.map(async (cliente) => {
-          const cantidadVuelos = await Pasaje.count({
-            where: { idcliente: cliente.idcliente },
-          })
-          // Calcular el promedio de millas por vuelo
-          const millasPromedioPorVuelo =
-            cantidadVuelos > 0 ? cliente.millas / cantidadVuelos : 0
-          return {
-            ...cliente.dataValues,
-            cantidadVuelos,
-            millasPromedioPorVuelo, // Agregar este campo al objeto
-          }
-        })
-      )
-
-      res.status(200).json(clientesConVuelos)
-    } catch (error) {
-      console.error("Error al obtener los clientes top:", error)
-      res.status(500).json({ error: "Error al obtener los clientes" })
-    }
   }
+}
+
+const obtenerTopClientes = async (req, res) => {
+  try {
+    const topClientes = await Cliente.findAll({
+      attributes: ["idcliente", "nombre", "apellido", "email", "millas"],
+      order: [["millas", "DESC"]],
+      limit: 5,
+    })
+
+    const clientesConVuelos = await Promise.all(
+      topClientes.map(async (cliente) => {
+        const cantidadVuelos = await Pasaje.count({
+          where: { idcliente: cliente.idcliente },
+        })
+        // Calcular el promedio de millas por vuelo
+        const millasPromedioPorVuelo =
+          cantidadVuelos > 0 ? cliente.millas / cantidadVuelos : 0
+        return {
+          ...cliente.dataValues,
+          cantidadVuelos,
+          millasPromedioPorVuelo,
+        }
+      })
+    )
+
+    res.status(200).json(clientesConVuelos)
+  } catch (error) {
+    console.error("Error al obtener los clientes top:", error)
+    res.status(500).json({ error: "Error al obtener los clientes" })
+  }
+}
 
 const getClientesPasaporte = async (req, res) => {
   const pasaporte = req.params.busqueda
@@ -168,25 +167,30 @@ const getClienteById = async (req, res) => {
   const idcliente = req.params.idcliente
 
   try {
-   const cliente = await Cliente.findByPk(idcliente, {
-     include: [
-       {
-         model: Pasaje,
-         include: [
-           {
-             model: Ruta,
-             attributes: ["idorigen", "iddestino", "horariosalida", "duracion"],
-             include: [
-               {
-                 model: Avion,
-                 attributes: ["nombre"],
-               },
-             ],
-           },
-         ],
-       },
-     ],
-   })
+    const cliente = await Cliente.findByPk(idcliente, {
+      include: [
+        {
+          model: Pasaje,
+          include: [
+            {
+              model: Ruta,
+              attributes: [
+                "idorigen",
+                "iddestino",
+                "horariosalida",
+                "duracion",
+              ],
+              include: [
+                {
+                  model: Avion,
+                  attributes: ["nombre"],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    })
 
     if (!cliente) {
       return res.status(404).json({ message: "Cliente no encontrado" })
@@ -202,6 +206,7 @@ const getClienteById = async (req, res) => {
 const updateClienteMillas = async (req, res) => {
   const id = req.params.idcliente
   const millas = req.body.millas
+  
 
   try {
     // encontrar el cliente
@@ -222,8 +227,6 @@ const updateClienteMillas = async (req, res) => {
       .json({ error: "Error al actualizar las millas del cliente" })
   }
 }
-
-
 
 module.exports = {
   getClientes,
