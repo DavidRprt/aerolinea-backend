@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt")
 const Empleado = require("../models/empleado")
 const Empleo = require("../models/empleo")
 
+// Caja blanca
 const validarEmail = (email) => {
   if (email.length === 0) {
     return { valido: false, mensaje: "El email no puede estar vacío" } // Flujo 1

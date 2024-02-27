@@ -37,7 +37,6 @@ const getAllTripulantes = async (req, res) => {
 
 // Obtener todas las tripulaciones incluyendo un array con cada miembro y sus datos
 const getAllTripulaciones = async (req, res) => {
-  console.log("HEREEE")
   try {
     const tripulaciones = await Tripulacion.findAll({
       include: [

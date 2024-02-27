@@ -8,6 +8,7 @@ router.get(
   "/aeropuertos/mas-rutas",
   aeropuertoController.getAeropuertosConMasRutas
 )
+
 router.post("/aeropuertos", validateToken, aeropuertoController.postAeropuerto)
 
 router.delete(

@@ -4,6 +4,7 @@ const Pasaje = require("../models/pasaje")
 const Ruta = require("../models/rutas")
 const Avion = require("../models/avion")
 
+// Metodo para obtener todos los clientes
 const getClientes = async (req, res) => {
   try {
     const clientes = await Cliente.findAll({
@@ -38,6 +39,7 @@ const getClientes = async (req, res) => {
   }
 }
 
+// Metodo para agregar un nuevo cliente
 const postCliente = async (req, res) => {
   try {
     const nuevoCliente = await Cliente.create(req.body)
@@ -48,6 +50,7 @@ const postCliente = async (req, res) => {
   }
 }
 
+// Metodo para obtener los clientes con mas millas
 const obtenerTopClientes = async (req, res) => {
   try {
     const topClientes = await Cliente.findAll({
@@ -79,6 +82,7 @@ const obtenerTopClientes = async (req, res) => {
   }
 }
 
+// Metodo para buscar clientes por pasaporte
 const getClientesPasaporte = async (req, res) => {
   const pasaporte = req.params.busqueda
   try {
@@ -121,6 +125,7 @@ const getClientesPasaporte = async (req, res) => {
   }
 }
 
+// Metodo para buscar clientes por email
 const getClientesEmail = async (req, res) => {
   const email = req.params.busqueda
   try {
@@ -163,6 +168,7 @@ const getClientesEmail = async (req, res) => {
   }
 }
 
+// Metodo para buscar clientes por id
 const getClienteById = async (req, res) => {
   const idcliente = req.params.idcliente
 
@@ -203,10 +209,10 @@ const getClienteById = async (req, res) => {
   }
 }
 
+// Metodo para actualizar las millas del cliente
 const updateClienteMillas = async (req, res) => {
   const id = req.params.idcliente
   const millas = req.body.millas
-  
 
   try {
     // encontrar el cliente
