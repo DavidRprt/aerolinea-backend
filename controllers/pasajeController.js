@@ -2,6 +2,7 @@ const { Op } = require("sequelize")
 const Pasaje = require("../models/pasaje")
 const Cliente = require("../models/cliente")
 const Ruta = require("../models/rutas")
+const Menu = require("../models/menu")
 const Avion = require("../models/avion")
 const Clase = require("../models/clase")
 const sequelize = require("../utils/sequelize")
@@ -31,6 +32,15 @@ const getPasajes = async (req, res) => {
   } catch (error) {
     console.error("Error al obtener los pasajes:", error)
     res.status(500).json({ error: "Error al obtener los pasajes" })
+  }
+}
+const getTodosLosMenues = async (req, res) => {
+  try {
+    const menues = await Menu.findAll()
+    res.status(200).json(menues)
+  } catch (error) {
+    console.error("Error al obtener los menús:", error)
+    res.status(500).json({ error: "Error al obtener los menús" })
   }
 }
 
@@ -98,6 +108,7 @@ const getPasajesByClienteId = async (req, res) => {
 
 const crearPasaje = async (req, res) => {
   const { idcliente, idruta, idclase, idreserva, fecha, precio } = req.body
+  const id_menu = 1
 
   try {
     const nuevoPasaje = await Pasaje.create({
@@ -107,6 +118,7 @@ const crearPasaje = async (req, res) => {
       idreserva,
       fecha,
       precio,
+      id_menu
     })
 
     res.status(201).json(nuevoPasaje)
@@ -143,10 +155,31 @@ const getPasajesPorClase = async (req, res) => {
   }
 }
 
+const actualizarMenusDePasajes = async (req, res) => {
+  const cambiosMenu = req.body 
+
+  try {
+    await Promise.all(
+      Object.entries(cambiosMenu).map(async ([idpasaje, id_menu]) => {
+        await Pasaje.update({ id_menu }, { where: { idpasaje } })
+      })
+    )
+
+    res
+      .status(200)
+      .json({ message: "Menús de pasajes actualizados correctamente." })
+  } catch (error) {
+    console.error("Error al actualizar menús de pasajes:", error)
+    res.status(500).json({ error: "Error al actualizar menús de pasajes" })
+  }
+}
+
 module.exports = {
   getPasajes,
   getPasajesByClienteId,
   getPasajesByAirport,
   crearPasaje,
   getPasajesPorClase,
+  getTodosLosMenues,
+  actualizarMenusDePasajes,
 }

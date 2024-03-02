@@ -3,6 +3,7 @@ const Cliente = require("../models/cliente")
 const Pasaje = require("../models/pasaje")
 const Ruta = require("../models/rutas")
 const Avion = require("../models/avion")
+const Menu = require("../models/menu")
 
 // Metodo para obtener todos los clientes
 const getClientes = async (req, res) => {
@@ -178,6 +179,10 @@ const getClienteById = async (req, res) => {
         {
           model: Pasaje,
           include: [
+            {
+              model: Menu,
+              attributes: ["nombre"],
+            },
             {
               model: Ruta,
               attributes: [

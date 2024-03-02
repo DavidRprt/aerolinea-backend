@@ -4,6 +4,7 @@ const Ruta = require("./rutas")
 const Cliente = require("./cliente")
 const Reserva = require("./reserva")
 const Clase = require("./clase")
+const Menu = require("./menu")
 
 class Pasaje extends Model {}
 
@@ -19,6 +20,10 @@ Pasaje.init(
     idcliente: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    id_menu: {
+      type: DataTypes.INTEGER,
+      allowNull: false, 
     },
     idruta: {
       type: DataTypes.INTEGER,
@@ -53,6 +58,7 @@ Pasaje.belongsTo(Ruta, { foreignKey: "idruta" })
 Pasaje.belongsTo(Cliente, { foreignKey: "idcliente" })
 Pasaje.belongsTo(Reserva, { foreignKey: "idreserva" })
 Pasaje.belongsTo(Clase, { foreignKey: "idclase" })
+Pasaje.belongsTo(Menu, { foreignKey: "id_menu" })
 Cliente.hasMany(Pasaje, { foreignKey: "idcliente" })
 Reserva.hasMany(Pasaje, { foreignKey: "idreserva" })
 

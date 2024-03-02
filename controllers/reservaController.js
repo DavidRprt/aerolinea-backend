@@ -4,6 +4,7 @@ const Pasaje = require("../models/pasaje")
 const Cliente = require("../models/cliente")
 const Ruta = require("../models/rutas")
 const Avion = require("../models/avion")
+const Menu = require("../models/menu")
 
 const getReservas = async (req, res) => {
   try {
@@ -64,11 +65,16 @@ const getReservaById = async (req, res) => {
             "idclase",
             "fecha",
             "precio",
+            "id_menu",
           ],
           include: [
             {
               model: Cliente,
               attributes: ["idcliente", "nombre", "apellido", "millas"],
+            },
+            {
+              model: Menu,
+              attributes: ["nombre"],
             },
             {
               model: Ruta,
