@@ -27,12 +27,12 @@ Tripulante.init(
       allowNull: false,
       references: {
         model: Cargo,
-        key: "idCargo",
+        key: "idcargo",
       },
     },
     idtripulacion: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: {
         model: Tripulacion, 
         key: "idtripulacion",

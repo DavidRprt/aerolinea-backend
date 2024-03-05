@@ -1,6 +1,7 @@
 const { Sequelize, Model, DataTypes } = require("sequelize")
 const sequelize = require("../utils/sequelize")
-const Tripulante = require("./tripulante") 
+const Tripulante = require("./tripulante")
+const EsquemaTripulacion = require("./esquemaTripulacion")
 
 class Tripulacion extends Model {}
 
@@ -17,6 +18,14 @@ Tripulacion.init(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
+    id_esquema: {
+      type: DataTypes.INTEGER,
+      allowNull: true, 
+      references: {
+        model: "esquema_tripulacion", 
+        key: "id_esquema",
+      },
+    },
   },
   {
     sequelize,
@@ -26,5 +35,6 @@ Tripulacion.init(
   }
 )
 
+Tripulacion.belongsTo(EsquemaTripulacion, { foreignKey: "id_esquema" })
 
 module.exports = Tripulacion

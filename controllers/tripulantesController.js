@@ -1,6 +1,7 @@
 const Cargo = require("../models/cargo")
 const Tripulante = require("../models/tripulante")
 const Tripulacion = require("../models/tripulacion")
+const EsquemaTripulacion = require("../models/esquemaTripulacion")
 
 // Obtener todos los cargos
 const getAllCargos = async (req, res) => {
@@ -20,7 +21,7 @@ const getAllTripulantes = async (req, res) => {
       include: [
         {
           model: Cargo,
-          attributes: ["nombre", "idCargo"],
+          attributes: ["nombre", "idcargo"],
         },
         {
           model: Tripulacion,
@@ -42,10 +43,14 @@ const getAllTripulaciones = async (req, res) => {
       include: [
         {
           model: Tripulante,
-          include: [Cargo], 
+          include: [Cargo],
+        },
+        {
+          model: EsquemaTripulacion, // Incluir el modelo EsquemaTripulacion
         },
       ],
     })
+    console.log(tripulaciones)
     res.status(200).json(tripulaciones)
   } catch (error) {
     console.error("Error al obtener las tripulaciones:", error)
