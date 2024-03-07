@@ -42,6 +42,10 @@ Ruta.init(
       type: DataTypes.FLOAT,
       allowNull: false,
     },
+    idtripulacion: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     horariosalida: {
       type: DataTypes.TIME,
       allowNull: false,
@@ -92,6 +96,5 @@ Aeropuerto.hasMany(Ruta, { foreignKey: "idorigen", as: "RutasOrigen" })
 Aeropuerto.hasMany(Ruta, { foreignKey: "iddestino", as: "RutasDestino" })
 Ruta.belongsTo(Aeropuerto, { foreignKey: "idorigen", as: "Origen" })
 Ruta.belongsTo(Aeropuerto, { foreignKey: "iddestino", as: "Destino" })
-
 
 module.exports = Ruta

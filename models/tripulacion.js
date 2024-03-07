@@ -1,4 +1,4 @@
-const { Sequelize, Model, DataTypes } = require("sequelize")
+const { Model, DataTypes } = require("sequelize")
 const sequelize = require("../utils/sequelize")
 const Tripulante = require("./tripulante")
 const EsquemaTripulacion = require("./esquemaTripulacion")
