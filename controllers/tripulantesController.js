@@ -2,6 +2,8 @@ const Cargo = require("../models/cargo")
 const Tripulante = require("../models/tripulante")
 const Tripulacion = require("../models/tripulacion")
 const EsquemaTripulacion = require("../models/esquemaTripulacion")
+const LogTripulante = require("../models/logTripulante")
+const Empleado = require("../models/empleado")
 
 // Obtener todos los cargos
 const getAllCargos = async (req, res) => {
@@ -87,35 +89,90 @@ const addTripulante = async (req, res) => {
   }
 }
 
-// Actualizar un tripulante
 const updateTripulante = async (req, res) => {
   try {
-    const { idtripulante } = req.params;
-    const { nombre, apellido, idcargo, idtripulacion } = req.body;
+    const { idtripulante } = req.params
+    const { nombre, apellido, idcargo, idtripulacion, idempleado } = req.body
 
-    if (!idtripulante) {
-      return res.status(400).json({ error: "El ID del tripulante es obligatorio." });
+
+    // Asegurarse de que el idempleado se ha proporcionado y no es nulo
+    if (!idempleado) {
+      return res
+        .status(400)
+        .json({ error: "El ID del empleado es obligatorio." })
     }
 
-    const tripulante = await Tripulante.findByPk(idtripulante);
+    const tripulante = await Tripulante.findByPk(idtripulante)
 
     if (!tripulante) {
-      return res.status(404).json({ error: "Tripulante no encontrado." });
+      return res.status(404).json({ error: "Tripulante no encontrado." })
     }
 
-    tripulante.nombre = nombre || tripulante.nombre;
-    tripulante.apellido = apellido || tripulante.apellido;
-    tripulante.idcargo = idcargo || tripulante.idcargo;
-    tripulante.idtripulacion = idtripulacion || tripulante.idtripulacion;
+    // Capturar los datos anteriores antes de realizar la actualización
+    const datosAnteriores = {
+      nombre_anterior: tripulante.nombre,
+      apellido_anterior: tripulante.apellido,
+      cargo_id_anterior: tripulante.idcargo,
+      tripulacion_id_anterior: tripulante.idtripulacion,
+    }
 
-    await tripulante.save();
+    // Actualizar con los nuevos datos
+    tripulante.nombre = nombre || tripulante.nombre
+    tripulante.apellido = apellido || tripulante.apellido
+    tripulante.idcargo = idcargo || tripulante.idcargo
+    tripulante.idtripulacion = idtripulacion || tripulante.idtripulacion
 
-    res.status(200).json(tripulante);
+    await tripulante.save()
+
+    // Crear un registro de log con los datos antiguos y nuevos
+    await LogTripulante.create({
+      tripulante_id: idtripulante,
+      usuario_id: idempleado,
+      ...datosAnteriores,
+      nombre_actualizado: tripulante.nombre,
+      apellido_actualizado: tripulante.apellido,
+      cargo_id_actualizado: tripulante.idcargo,
+      tripulacion_id_actualizada: tripulante.idtripulacion,
+      hora: new Date(),
+    })
+
+    res.status(200).json(tripulante)
   } catch (error) {
-    console.error("Error al actualizar el tripulante:", error);
-    res.status(500).json({ error: "Error al actualizar el tripulante." });
+    console.error("Error al actualizar el tripulante:", error)
+    res.status(500).json({ error: "Error al actualizar el tripulante." })
   }
-};
+}
+
+const getAllLogTripulantes = async (req, res) => {
+  try {
+    const logTripulantes = await LogTripulante.findAll({
+      include: [
+        {
+          model: Tripulante,
+          include: [
+            {
+              model: Cargo,
+              attributes: ["nombre"],
+            },
+            {
+              model: Tripulacion,
+              attributes: ["nombre"],
+            },
+          ],
+          attributes: ["nombre", "apellido"],
+        },
+        {
+          model: Empleado,
+          attributes: ["nombre", "apellido", "email"],
+        },
+      ],
+    })
+    res.status(200).json(logTripulantes)
+  } catch (error) {
+    console.error("Error al obtener los logs de tripulantes:", error)
+    res.status(500).json({ error: "Error al obtener los logs de tripulantes" })
+  }
+}
 
 
 
@@ -124,5 +181,6 @@ module.exports = {
   getAllTripulantes,
   getAllTripulaciones,
   addTripulante,
-  updateTripulante
+  updateTripulante,
+  getAllLogTripulantes
 }

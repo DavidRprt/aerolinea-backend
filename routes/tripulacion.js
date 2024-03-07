@@ -6,6 +6,7 @@ const { validateToken } = require("../utils/middleware")
 router.get("/cargos", tripulantesController.getAllCargos)
 router.get("/tripulantes", tripulantesController.getAllTripulantes)
 router.get("/tripulacion", tripulantesController.getAllTripulaciones)
+router.get("/tripulacionLogs", tripulantesController.getAllLogTripulantes)
 
 router.post("/tripulantes", validateToken, tripulantesController.addTripulante)
 router.put(
