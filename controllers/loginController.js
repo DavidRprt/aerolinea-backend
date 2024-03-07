@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken")
 const Empleado = require("../models/empleado")
 const Token = require("../models/token")
 const Empleo = require("../models/empleo")
+const Log = require("../models/log")
+const TipoLog = require("../models/tipoLog")
 const crypto = require("crypto")
 const secretKey = process.env.SECRET
 const { sendEmail } = require("../utils/nodemailer")
@@ -37,7 +39,7 @@ const login = async (req, res) => {
     }
 
     // Generar JWT
-    jwt.sign(payload, secretKey, { expiresIn: "1h" }, (error, token) => {
+    jwt.sign(payload, secretKey, { expiresIn: "1h" }, async (error, token) => {
       if (error) throw error
 
       // Configurando las cookies
@@ -45,6 +47,12 @@ const login = async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         maxAge: 60 * 60 * 1000, // 1 hora
+      })
+
+      // Crear un registro de log
+      await Log.create({
+        usuario_id: user.idempleado,
+        tipo_log_id: 1, // Tipo de log para 'inicio de sesión'
       })
 
       res.status(200).json({
@@ -64,7 +72,6 @@ const login = async (req, res) => {
     res.status(500).json({ error: "Error durante el inicio de sesión" })
   }
 }
-
 const requestResetPassword = async (req, res) => {
   const { email } = req.body
   const baseUrl = process.env.REACT_APP_BASE_URL
@@ -113,6 +120,12 @@ const resetPassword = async (req, res) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10)
     user.passwordhash = hashedPassword
     await user.save()
+
+    // Crear un registro de log para el cambio de contraseña
+    await Log.create({
+      usuario_id: user.idempleado,
+      tipo_log_id: 3, // Tipo de log para 'cambio de contraseña'
+    })
 
     res.status(200).json({ message: "Contraseña actualizada correctamente" })
   } catch (error) {
@@ -177,6 +190,27 @@ const updateEmployeeJob = async (req, res) => {
   }
 }
 
+const getAllLogs = async (req, res) => {
+  try {
+       const logs = await Log.findAll({
+         include: [
+           { model: Empleado, attributes: ["nombre", "apellido", "email"] },
+           { model: TipoLog, attributes: ["nombre"] },
+         ],
+       })
+
+
+    if (!logs.length) {
+      return res.status(404).json({ message: "No se encontraron logs." })
+    }
+
+    res.status(200).json(logs)
+  } catch (error) {
+    console.error("Error al obtener los logs:", error)
+    res.status(500).json({ error: "Error interno" })
+  }
+}
+
 module.exports = {
   login,
   requestResetPassword,
@@ -184,4 +218,5 @@ module.exports = {
   getAllEmployees,
   getAllJobs,
   updateEmployeeJob,
+  getAllLogs,
 }

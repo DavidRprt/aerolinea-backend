@@ -1,6 +1,8 @@
 const bcrypt = require("bcrypt")
 const Empleado = require("../models/empleado")
 const Empleo = require("../models/empleo")
+const Log = require("../models/log")
+const TipoLog = require("../models/tipoLog")
 
 // Caja blanca
 const validarEmail = (email) => {
@@ -46,6 +48,12 @@ const signUp = async (req, res) => {
       apellido: formattedApellido,
       idempleo,
     })
+
+      await Log.create({
+        usuario_id: newUser.idempleado, 
+        tipo_log_id: 2, // Tipo de log para 'registro'
+      })
+
     res.status(201).json({ id: newUser.idempleo, email: newUser.email })
   } catch (error) {
     console.error("Error durante el registro:", error)
