@@ -6,6 +6,7 @@ const Menu = require("../models/menu")
 const Avion = require("../models/avion")
 const Clase = require("../models/clase")
 const sequelize = require("../utils/sequelize")
+const Equipaje = require("../models/equipaje")
 
 const getPasajes = async (req, res) => {
   try {
@@ -34,6 +35,17 @@ const getPasajes = async (req, res) => {
     res.status(500).json({ error: "Error al obtener los pasajes" })
   }
 }
+
+const getTodosLosEquipajes = async (req, res) => {
+  try {
+    const equipajes = await Equipaje.findAll()
+    res.status(200).json(equipajes)
+  } catch (error) {
+    console.error("Error al obtener todos los equipajes:", error)
+    res.status(500).json({ error: "Error al obtener todos los equipajes" })
+  }
+}
+
 const getTodosLosMenues = async (req, res) => {
   try {
     const menues = await Menu.findAll()
@@ -107,24 +119,40 @@ const getPasajesByClienteId = async (req, res) => {
 }
 
 const crearPasaje = async (req, res) => {
-  const { idcliente, idruta, idclase, idreserva, fecha, precio } = req.body
-  const id_menu = 1
+  const {
+    idcliente,
+    idruta,
+    idclase,
+    idreserva,
+    fecha,
+    precio,
+    equipajeExtra,
+  } = req.body
+  const id_menu = 1 
 
   try {
+    // Primero, creamos el pasaje
     const nuevoPasaje = await Pasaje.create({
       idcliente,
       idruta,
       idclase,
       idreserva,
       fecha,
-      precio,
-      id_menu
+      precio: precio, 
+      id_menu,
     })
+    let equipajesCreados = []
+    for (let i = 0; i < equipajeExtra; i++) {
+      const nuevoEquipaje = await Equipaje.create({
+        idpasaje: nuevoPasaje.idpasaje
+      })
+      equipajesCreados.push(nuevoEquipaje)
+    }
 
-    res.status(201).json(nuevoPasaje)
+    res.status(201).json({ nuevoPasaje, equipajesCreados })
   } catch (error) {
-    console.error("Error al crear el pasaje:", error)
-    res.status(500).json({ error: "Error al crear el pasaje" })
+    console.error("Error al crear el pasaje y el equipaje:", error)
+    res.status(500).json({ error: "Error al crear el pasaje y el equipaje" })
   }
 }
 
@@ -182,4 +210,5 @@ module.exports = {
   getPasajesPorClase,
   getTodosLosMenues,
   actualizarMenusDePasajes,
+  getTodosLosEquipajes
 }

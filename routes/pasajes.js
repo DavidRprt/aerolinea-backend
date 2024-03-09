@@ -5,6 +5,7 @@ const { validateToken } = require("../utils/middleware")
 
 router.get("/pasajes", pasajeController.getPasajes)
 router.get("/menues", pasajeController.getTodosLosMenues)
+router.get("/equipajes", pasajeController.getTodosLosEquipajes)
 router.get("/pasajes/frecuenciaPorClase", pasajeController.getPasajesPorClase)
 router.get("/pasajes/:idcliente", pasajeController.getPasajesByClienteId)
 router.get("/pasajes/:idorigen/:iddestino", pasajeController.getPasajesByAirport)
