@@ -5,6 +5,9 @@ const Cliente = require("../models/cliente")
 const Ruta = require("../models/rutas")
 const Avion = require("../models/avion")
 const Menu = require("../models/menu")
+const stripe = require("stripe")(
+  "sk_test_51OtERiCIkjrHMdYq2drUaAzIL1c7w1HeiPnXj5Rj52apAFe2Uai5G8KEa67bWMAKpagchMlpWacJ15Ax34p506yc006Ctv3KPd"
+)
 
 const getReservas = async (req, res) => {
   try {
@@ -12,13 +15,7 @@ const getReservas = async (req, res) => {
       include: [
         {
           model: Pasaje,
-          attributes: [
-            "idpasaje",
-            "idruta",
-            "idclase",
-            "fecha",
-            "precio",
-          ],
+          attributes: ["idpasaje", "idruta", "idclase", "fecha", "precio"],
           include: [
             {
               model: Cliente,
@@ -126,4 +123,32 @@ const crearReserva = async (req, res) => {
   }
 }
 
-module.exports = { getReservas, getReservaById, crearReserva }
+const crearPago = async (req, res) => {
+  const { paymentMethodId, precioTotal, currency = "usd" } = req.body
+
+  try {
+    const amount = precioTotal * 100
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount,
+      currency,
+      payment_method: paymentMethodId,
+      confirm: true,
+      automatic_payment_methods: {
+        enabled: true,
+        allow_redirects: "never",
+      },
+    })
+
+    res.status(201).json({
+      success: true,
+      paymentIntentId: paymentIntent.id,
+      status: paymentIntent.status,
+    })
+  } catch (error) {
+    console.error("Error al crear el pago con Stripe:", error)
+    res.status(500).json({ error: error.message })
+  }
+}
+
+module.exports = { getReservas, getReservaById, crearReserva, crearPago }

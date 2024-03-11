@@ -6,5 +6,6 @@ const { validateToken } = require("../utils/middleware")
 router.get("/reservas", reservaController.getReservas)
 router.get("/reservas/:idreserva", reservaController.getReservaById)
 router.post("/reservas", validateToken, reservaController.crearReserva)
+router.post("/pagar", validateToken, reservaController.crearPago)
 
 module.exports = router
